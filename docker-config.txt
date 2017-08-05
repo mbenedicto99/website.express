@@ -1,0 +1,40 @@
+->Trabalhando com express Node.js
+npm install -g express-generator
+express -e --git <nome do projeto>
+cd website.express && npm install
+npm start
+
+http://localhost:3000
+
+===========================================
+docker build -t website.express .
+Dockerfile:
+FROM node:4.3.2
+
+RUN useradd --user-group --create-home --shell /bin/false app && npm install --global npm@3.7.5
+
+ENV HOME=/app/home/
+
+USER app
+WORKDIR $HOME
+COPY . $HOME
+
+USER root
+RUN chown -R app:app $HOME/*
+
+#package.json diz todos os modulos que devem ser instalados
+RUN npm install
+
+USER app
+CMD ["npm", "start"]
+
+===========================================
+->Gerenciando imagens
+docker images -a
+docker ps -a
+remove containers: docker rm $(docker ps -a -f status=exited -q)
+remove imagens: docker rmi $(docker images -a -q)
+===========================================
+->Redes no Docker
+criando rede: docker network create --subnet=192.168.105.128/25 mynet
+docker run --net mynet --ip 192.168.105.130 -p 3000:3000 website.express
